@@ -1,8 +1,8 @@
 use std::sync::atomic::{AtomicUsize, Ordering};
-
 use rayon::{str::ParallelString, prelude::ParallelIterator};
 
 pub mod dataset;
+use dataset::{POSITIVE_WORDS, NEGATIVE_WORDS};
 
 #[allow(dead_code)]
 fn is_negative_word(word: &str) -> bool {
