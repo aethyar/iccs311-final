@@ -6,12 +6,12 @@ use dataset::{POSITIVE_WORDS, NEGATIVE_WORDS};
 
 #[allow(dead_code)]
 fn is_negative_word(word: &str) -> bool {
-    false
+    NEGATIVE_WORDS.contains(word)
 }
 
 #[allow(dead_code)]
 fn is_positive_word(word: &str) -> bool {
-    false
+    POSITIVE_WORDS.contains(word)
 }
 
 #[allow(dead_code)]
