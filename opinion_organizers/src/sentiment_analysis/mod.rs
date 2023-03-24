@@ -1,20 +1,16 @@
 use std::sync::atomic::{AtomicUsize, Ordering};
 use rayon::{str::ParallelString, prelude::ParallelIterator};
 
-pub mod dataset;
-use dataset::{POSITIVE_WORDS, NEGATIVE_WORDS};
+mod dataset;
 
-#[allow(dead_code)]
 fn is_negative_word(word: &str) -> bool {
-    NEGATIVE_WORDS.contains(word)
+    dataset::NEGATIVE_WORDS.contains(word)
 }
 
-#[allow(dead_code)]
 fn is_positive_word(word: &str) -> bool {
-    POSITIVE_WORDS.contains(word)
+    dataset::POSITIVE_WORDS.contains(word)
 }
 
-#[allow(dead_code)]
 pub fn get_sentiment_counts(input: String) -> (usize, usize) {
     let positive_count = AtomicUsize::new(0);
     let negative_count = AtomicUsize::new(0);
