@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 rayon = "1.7"
+map-macro = "0.2.5"
+lazy_static = "1.4.0"
