@@ -1,11 +1,19 @@
-use crate::sentiment_analysis::not_main;
-use crate::sentiment_analysis::not_main1;
+use crate::sentiment_analysis::get_sentiment_counts;
+use crate::web_scraper::not_main1;
 
 mod web_scraper;
 mod sentiment_analysis;
 
 fn main() {
-    println!("Hello, world!");
-    not_main();
-    not_main1();
+    // ask for user input for a link to process
+
+    not_main1();  // replace with function in web_scraper that processes the link
+    let test_string = "This is a sad test.";  // replace with web_scraper output
+
+    let (pos, neg): (usize, usize) = get_sentiment_counts(test_string.to_owned());  // replace with parallel code if web_scraper output is a collection of Strings
+
+    // can make the output fancier later
+    if pos == 0 { print!("{}", neg) }
+    else if neg == 0 { print!("{}", pos) }
+    else { print!("{}", pos/neg) }
 }
