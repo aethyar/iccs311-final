@@ -4,14 +4,24 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 mod dataset;
 
-fn is_negative_word(word: &str) -> bool {
-    dataset::NEGATIVE_WORDS.contains(word)
-}
-
+/// Checks if input word is part of `POSITIVE_WORDS` set
+///
+/// Returns `true` if satisfied, `false` otherwise
 fn is_positive_word(word: &str) -> bool {
     dataset::POSITIVE_WORDS.contains(word)
 }
 
+/// Checks if input word is part of `NEGATIVE_WORDS` set
+///
+/// Returns `true` if satisfied, `false` otherwise
+fn is_negative_word(word: &str) -> bool {
+    dataset::NEGATIVE_WORDS.contains(word)
+}
+
+/// Produces the sentiment counts for the input string by checking all the words from the input
+/// in parallel
+///
+/// Returns the total count for positive and negative words
 pub fn get_sentiment_counts(input: String) -> (usize, usize) {
     let positive_count = AtomicUsize::new(0);
     let negative_count = AtomicUsize::new(0);
@@ -30,6 +40,7 @@ pub fn get_sentiment_counts(input: String) -> (usize, usize) {
     (positive_count.into_inner(), negative_count.into_inner())
 }
 
+/// Sample tests below
 #[cfg(test)]
 mod tests {
     use super::*;
