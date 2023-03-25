@@ -1,6 +1,6 @@
-use std::sync::atomic::{AtomicUsize, Ordering};
-use rayon::{str::ParallelString, prelude::ParallelIterator};
+use rayon::{prelude::ParallelIterator, str::ParallelString};
 use regex::Regex;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 mod dataset;
 
@@ -20,8 +20,11 @@ pub fn get_sentiment_counts(input: String) -> (usize, usize) {
 
     input.par_split_whitespace().for_each(|word| {
         let clean_word = re.replace_all(word, "").to_lowercase();
-        if is_positive_word(&clean_word) { positive_count.fetch_add(1, Ordering::SeqCst); }
-        else if is_negative_word(&clean_word) { negative_count.fetch_add(1, Ordering::SeqCst); }
+        if is_positive_word(&clean_word) {
+            positive_count.fetch_add(1, Ordering::SeqCst);
+        } else if is_negative_word(&clean_word) {
+            negative_count.fetch_add(1, Ordering::SeqCst);
+        }
     });
 
     (positive_count.into_inner(), negative_count.into_inner())
@@ -33,9 +36,18 @@ mod tests {
 
     #[test]
     fn basic_test() {
-        assert_eq!((3, 0), get_sentiment_counts("Wow, a good word: Nice.".to_owned()));
-        assert_eq!((0, 2), get_sentiment_counts("He's a sad drop-out.".to_owned()));
-        assert_eq!((0, 2), get_sentiment_counts("bull****, bull----".to_owned()));
+        assert_eq!(
+            (3, 0),
+            get_sentiment_counts("Wow, a good word: Nice.".to_owned())
+        );
+        assert_eq!(
+            (0, 2),
+            get_sentiment_counts("He's a sad drop-out.".to_owned())
+        );
+        assert_eq!(
+            (0, 2),
+            get_sentiment_counts("bull****, bull----".to_owned())
+        );
     }
 
     #[test]
@@ -48,10 +60,10 @@ mod tests {
             "While not all-together perfect, the film represents a monumental cinematic achievement that deserves to be placed high within the caliber of Nolan's filmography."
             .to_owned()
         ));
-        assert_eq!((1, 1), get_sentiment_counts(
-            "As spectacular as it is flawed."
-            .to_owned()
-        ));
+        assert_eq!(
+            (1, 1),
+            get_sentiment_counts("As spectacular as it is flawed.".to_owned())
+        );
     }
 
     #[test]
