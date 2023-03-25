@@ -40,7 +40,7 @@ fn create_negative_set() -> HashSet<&'static str> {
     negative_set
 }
 
-/// Declare the HashSets as lazily evaluated statics
+// Declare the HashSets as lazily evaluated statics
 lazy_static! {
     // contains 2005 words
     pub static ref POSITIVE_WORDS: HashSet<&'static str> = create_positive_set();
