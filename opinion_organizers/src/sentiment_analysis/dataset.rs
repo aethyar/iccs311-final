@@ -1,8 +1,18 @@
-//! This module contains all positive and negative words from the links below 
+//! This module contains all positive and negative words from the resources below 
 //! to be used in sentiment analysis:
 //! 
 //!     https://ptrckprry.com/course/ssd/data/positive-words.txt
 //!     https://ptrckprry.com/course/ssd/data/negative-words.txt
+//! 
+//!     Minqing Hu and Bing Liu. "Mining and Summarizing Customer Reviews." 
+//!         Proceedings of the ACM SIGKDD International Conference on Knowledge 
+//!         Discovery and Data Mining (KDD-2004), Aug 22-25, 2004, Seattle, 
+//!         Washington, USA,
+//! 
+//!     Bing Liu, Minqing Hu and Junsheng Cheng. "Opinion Observer: Analyzing 
+//!         and Comparing Opinions on the Web." Proceedings of the 14th 
+//!         International World Wide Web conference (WWW-2005), May 10-14, 
+//!         2005, Chiba, Japan.
 //! 
 //! The sets will be used constantly throughout the program.
 
@@ -38,15 +48,3 @@ lazy_static! {
     // contains 4783 words
     pub static ref NEGATIVE_WORDS: HashSet<&'static str> = create_negative_set();
 }
-
-/// CITATION
-/// 
-/// Minqing Hu and Bing Liu. "Mining and Summarizing Customer Reviews." 
-///     Proceedings of the ACM SIGKDD International Conference on Knowledge 
-///     Discovery and Data Mining (KDD-2004), Aug 22-25, 2004, Seattle, 
-///     Washington, USA,
-/// 
-/// Bing Liu, Minqing Hu and Junsheng Cheng. "Opinion Observer: Analyzing 
-///     and Comparing Opinions on the Web." Proceedings of the 14th 
-///     International World Wide Web conference (WWW-2005), May 10-14, 
-///     2005, Chiba, Japan.
