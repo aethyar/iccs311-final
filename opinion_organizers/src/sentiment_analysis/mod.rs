@@ -1,3 +1,8 @@
+//! This module contains the functions for getting the sentimental counts
+//! of any input `String`.
+//! 
+//! The code uses a parallel iterator over the input to perform counts quickly.
+
 use rayon::{prelude::ParallelIterator, str::ParallelString};
 use regex::Regex;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -18,10 +23,10 @@ fn is_negative_word(word: &str) -> bool {
     dataset::NEGATIVE_WORDS.contains(word)
 }
 
-/// Produces the sentiment counts for the input string by checking all the words from the input
-/// in parallel
+/// Produces the sentiment counts of the input by checking all the words 
+/// from the input in parallel
 ///
-/// Returns the total count for positive and negative words
+/// Returns the total count for positive and negative words as a tuple
 pub fn get_sentiment_counts(input: String) -> (usize, usize) {
     let positive_count = AtomicUsize::new(0);
     let negative_count = AtomicUsize::new(0);
