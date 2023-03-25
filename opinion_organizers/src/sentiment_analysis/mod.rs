@@ -1,5 +1,5 @@
 //! This module contains the functions for getting the sentimental counts
-//! of any input `String`.
+//! of any input String.
 //! 
 //! The code uses a parallel iterator over the input to perform counts quickly.
 
@@ -76,10 +76,10 @@ mod tests {
             "While not all-together perfect, the film represents a monumental cinematic achievement that deserves to be placed high within the caliber of Nolan's filmography."
             .to_owned()
         ));
-        assert_eq!(
-            (1, 1),
-            get_sentiment_counts("As spectacular as it is flawed.".to_owned())
-        );
+        assert_eq!((1, 1),get_sentiment_counts(
+            "As spectacular as it is flawed."
+            .to_owned()
+        ));
     }
 
     #[test]
