@@ -4,9 +4,9 @@ use crate::web_scraper::web_to_string;
 mod web_scraper;
 mod sentiment_analysis;
 
-use rayon::prelude::*;
-
 fn analyze_review(url: &str) -> f64 {
+    use rayon::iter::*;
+
     web_to_string(url);  // replace test_arr
 
     let test_arr = vec![  // replace with web_scraper output
@@ -26,8 +26,28 @@ fn analyze_review(url: &str) -> f64 {
 }
 
 fn main() {
-    // ask for user input for a link to process
+    use std::io;
 
-    let ratio = analyze_review("https://www.themoviedb.org/review/58a231c5925141179e000674");
-    print!("{}", ratio)
+    loop {
+        println!("Please enter a link:");
+
+        let mut input = String::new();
+
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => {
+                let link = input.trim();
+                let ratio = analyze_review(link);
+
+                println!("The score of these reviews is {}.", ratio);
+                if ratio > 0.7 { println!("You can enjoy this one!"); }
+                else { println!("You might want to think twice about this..."); }
+                    
+                break;
+            }
+            Err(error) => {
+                println!("Error reading input: {}", error);
+                continue;
+            }
+        }
+    }
 }
