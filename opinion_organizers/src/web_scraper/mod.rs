@@ -1,3 +1,8 @@
+//! This module contains the functions for web scraping in parallel
+//! of any input Vector of String.
+//! 
+//! The code uses a parallel iterator over the input to perform WebScraping quickly.
+
 extern crate reqwest;
 extern crate scraper;
 extern crate rayon;
@@ -11,7 +16,11 @@ use rayon::prelude::*;
 // Web_scraping
 // we'll be scraping from the individual reviews on - https://www.themoviedb.org/ only.
 
-
+/// Checks if input url's have a successful connection
+/// scrapes all paragraphs in the body of the individual movie review (this program is fine tuned to this specific movie review website)
+/// then merges it into 1 string and repeats in parallel the same thing with the other movie reviews before mapping it to a Vector containing all of the movie reviews
+///
+/// Returns a Vector of Strings containing the reviews
 #[allow(dead_code)]
 pub fn web_to_string(urls: &[&str]) -> Vec<String> {    // we take in a Vec of links that can be variale in amount
 
@@ -38,12 +47,26 @@ pub fn web_to_string(urls: &[&str]) -> Vec<String> {    // we take in a Vec of l
     .collect() // puts it into the vector
 }
 
+/// Sample tests below
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn basic_test() {
-        //
+    fn test_web_to_string() {
+        let urls = &["https://www.themoviedb.org/review/58a231c5925141179e000674", "https://www.themoviedb.org/review/5d340e7a2f8d090388d21ff2"];
+        let result = web_to_string(urls);
+        assert_eq!(result.len(), 2);
+        assert!(result[0].contains("The Imperial March"));
+        assert!(result[1].contains("Great film, great soundtrack"));
     }
+
+    #[test]
+    fn invalid_url_test() {
+        let urls = vec!["https://www.themoviedb.org/review/58a231c5925141179e000674", "https://invalidurl.com"];
+        let reviews = web_to_string(&urls);
+        assert_eq!(reviews[0], "Well, it actually has a title, what the Darth Vader theme. And that title is \n\"The Imperial March\", composed by the great John Williams, whom, \nas many of you may already know, also composed the theme music for \n\"Jaws\" - that legendary score simply titled, \"Main Title (Theme \nFrom Jaws)\".");
+        assert_eq!(reviews[1], "");
+    }
+
 }
