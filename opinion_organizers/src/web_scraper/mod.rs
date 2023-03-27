@@ -25,8 +25,9 @@ use rayon::prelude::*;
 pub fn web_to_string(urls: &[&str]) -> Vec<String> {    // we take in a Vec of links that can be variale in amount
 
     urls.par_iter().map(|url| {
-        
-        let req = reqwest::blocking::get(*url).unwrap();     // .expect("Couldn't load the url"); // error message for when we cannot establish a connection
+    
+        let req = reqwest::blocking::get(*url)
+            .unwrap_or_else(|err| panic!("Couldn't load the url: {}", err)); // error message for when we cannot establish a connection
         // if it's a success you will not see the error message
 
         let doc_body = Html::parse_document(&req.text().unwrap());  // parsing the document itself
@@ -63,10 +64,10 @@ mod tests {
 
     #[test]
     fn invalid_url_test() {
-        let urls = vec!["https://www.themoviedb.org/review/58a231c5925141179e000674", "https://invalidurl.com"];
-        let reviews = web_to_string(&urls);
-        assert_eq!(reviews[0], "Well, it actually has a title, what the Darth Vader theme. And that title is \n\"The Imperial March\", composed by the great John Williams, whom, \nas many of you may already know, also composed the theme music for \n\"Jaws\" - that legendary score simply titled, \"Main Title (Theme \nFrom Jaws)\".");
-        assert_eq!(reviews[1], "");
+        let urls_with_error_handling = vec!["https://www.themoviedb.org/review/58a231c5925141179e000674", "https://oehiuhfiuehfiucnwiunweonc.com"];
+        let reviews_with_error_handling = web_to_string(&urls_with_error_handling);
+        assert_eq!(reviews_with_error_handling[0], "Well, it actually has a title, what the Darth Vader theme. And that title is \n\"The Imperial March\", composed by the great John Williams, whom, \nas many of you may already know, also composed the theme music for \n\"Jaws\" - that legendary score simply titled, \"Main Title (Theme \nFrom Jaws)\".");
+        assert!(reviews_with_error_handling[1].is_empty());
     }
 
 }
