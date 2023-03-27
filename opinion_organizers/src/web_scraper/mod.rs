@@ -77,7 +77,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_web_to_string() {
+    fn test_web_to_string() {   // checks if the output of web_to_string is as expected
         let urls = vec!["https://www.themoviedb.org/review/58a231c5925141179e000674".to_string(), 
                                     "https://www.themoviedb.org/review/5d340e7a2f8d090388d21ff2".to_string(),
         ];
@@ -89,10 +89,28 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn invalid_url_test() {
+    fn invalid_url_test() { // tests if web_to_string panics when given a invalir url
         let urls_with_error_handling = vec!["https://oehiuhfiuehfiucnwiunweonc.com".to_string(),];
         let reviews_with_error_handling = web_to_string(urls_with_error_handling);
         assert_eq!(reviews_with_error_handling[0], "Well, it actually has a title, what the Darth Vader theme. And that title is \n\"The Imperial March\", composed by the great John Williams, whom, \nas many of you may already know, also composed the theme music for \n\"Jaws\" - that legendary score simply titled, \"Main Title (Theme \nFrom Jaws)\".");
+    }
+
+    #[test]
+    fn test_review_collection() {   // tests if the vector output length of review_collection is as expected
+        let result = review_collection("https://www.themoviedb.org/movie/11-star-wars/reviews");
+        assert_eq!(result.len(), 4);
+    }
+
+    #[test]
+    #[should_panic]
+    fn invalid_review_collection_url_test() {   // tests if review_collection panics when given a invalir url
+        let _result = review_collection("https://oehiuhfiuehfiucnwiunweonc.com");
+    }
+
+    #[test]
+    fn test_review_collection_large() { // tests a set of larget reviews to see if parallelism makes it faster
+        let result = review_collection("https://www.themoviedb.org/movie/157336-interstellar/reviews");
+        assert_eq!(result.len(), 9);
     }
 
 }
