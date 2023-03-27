@@ -6,8 +6,9 @@ mod sentiment_analysis;
 
 fn analyze_review(url: &str) -> f64 {
     use rayon::iter::*;
-
-    web_to_string(url);  // replace test_arr
+    
+    let urlss = &["https://www.themoviedb.org/review/58a231c5925141179e000674", "https://www.themoviedb.org/review/5d340e7a2f8d090388d21ff2"];
+    web_to_string(urlss);  // replace test_arr
 
     let test_arr = vec![  // replace with web_scraper output
         "It's a contemplative adventure and an emotional exploration that captivated me from its opening moments...",
