@@ -18,7 +18,7 @@ use rayon::prelude::*;
 /// ensure each review is not added to the slice of String more than once
 /// store the review websites in a slice
 #[allow(dead_code)]
-pub fn review_collection(masterurl: &str) -> &[String] {
+pub fn review_collection(masterurl: &str) -> Vec<String> {
     let req = reqwest::blocking::get(masterurl)
         .unwrap_or_else(|err| panic!("Couldn't load the url: {}", err)); // error message for when we cannot establish a connection
     
@@ -37,7 +37,7 @@ pub fn review_collection(masterurl: &str) -> &[String] {
         }
     }
 
-    reviews.as_slice()
+    web_to_string(reviews)
 }
 
 /// Checks if input url's have a successful connection
@@ -46,11 +46,11 @@ pub fn review_collection(masterurl: &str) -> &[String] {
 ///
 /// Returns a Vector of Strings containing the reviews
 #[allow(dead_code)]
-pub fn web_to_string(urls: &[&str]) -> Vec<String> {    // we take in a Vec of links that can be variale in amount
+pub fn web_to_string(urls: Vec<String>) -> Vec<String> {    // we take in a Vec of links that can be variale in amount
 
     urls.par_iter().map(|url| {
     
-        let req = reqwest::blocking::get(*url)
+        let req = reqwest::blocking::get(url.as_str())
             .unwrap_or_else(|err| panic!("Couldn't load the url: {}", err)); // error message for when we cannot establish a connection
         // if it's a success you will not see the error message
 
@@ -79,7 +79,9 @@ mod tests {
 
     #[test]
     fn test_web_to_string() {
-        let urls = &["https://www.themoviedb.org/review/58a231c5925141179e000674", "https://www.themoviedb.org/review/5d340e7a2f8d090388d21ff2"];
+        let urls = vec!["https://www.themoviedb.org/review/58a231c5925141179e000674".to_string(), 
+                                    "https://www.themoviedb.org/review/5d340e7a2f8d090388d21ff2".to_string(),
+        ];
         let result = web_to_string(urls);
         assert_eq!(result.len(), 2);
         assert!(result[0].contains("The Imperial March"));
@@ -88,8 +90,10 @@ mod tests {
 
     #[test]
     fn invalid_url_test() {
-        let urls_with_error_handling = vec!["https://www.themoviedb.org/review/58a231c5925141179e000674", "https://oehiuhfiuehfiucnwiunweonc.com"];
-        let reviews_with_error_handling = web_to_string(&urls_with_error_handling);
+        let urls_with_error_handling = vec!["https://www.themoviedb.org/review/58a231c5925141179e000674".to_string(),
+        "https://oehiuhfiuehfiucnwiunweonc.com".to_string(), 
+        ];
+        let reviews_with_error_handling = web_to_string(urls_with_error_handling);
         assert_eq!(reviews_with_error_handling[0], "Well, it actually has a title, what the Darth Vader theme. And that title is \n\"The Imperial March\", composed by the great John Williams, whom, \nas many of you may already know, also composed the theme music for \n\"Jaws\" - that legendary score simply titled, \"Main Title (Theme \nFrom Jaws)\".");
         assert!(reviews_with_error_handling[1].is_empty());
     }
