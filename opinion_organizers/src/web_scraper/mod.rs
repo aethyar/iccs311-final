@@ -10,11 +10,17 @@ extern crate rayon;
 use scraper::{Html, Selector};
 use rayon::prelude::*;
 
-// use scraper::Selector;
-// use scraper::Html;
-
 // Web_scraping
 // we'll be scraping from the individual reviews on - https://www.themoviedb.org/ only.
+
+/// Input is a link that contains other reviews
+/// through the link get the other reviews by navigating (in parallel) to each of the reviews website by clicking on "read the rest"
+/// ensure each review is not pushed to the Vector of String more than once
+/// store the review websites in a slice
+#[allow(dead_code)]
+pub fn review_collection(masterurl: &str) -> &[&str] {
+
+}
 
 /// Checks if input url's have a successful connection
 /// scrapes all paragraphs in the body of the individual movie review (this program is fine tuned to this specific movie review website)
