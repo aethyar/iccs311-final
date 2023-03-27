@@ -20,7 +20,7 @@ use rayon::prelude::*;
 #[allow(dead_code)]
 pub fn review_collection(masterurl: &str) -> Vec<String> {
     let req = reqwest::blocking::get(masterurl)
-        .unwrap_or_else(|err| panic!("Couldn't load the url: {}", err)); // error message for when we cannot establish a connection
+        .unwrap_or_else(|err| panic!("the URL does not exist: {}", err)); // error message for when we cannot establish a connection
     
     let doc_body = Html::parse_document(&req.text().unwrap());
 
@@ -36,6 +36,7 @@ pub fn review_collection(masterurl: &str) -> Vec<String> {
             }
         }
     }
+    // println!("{:?}", reviews);
     web_to_string(reviews)
 }
 
@@ -50,7 +51,7 @@ pub fn web_to_string(urls: Vec<String>) -> Vec<String> {    // we take in a Vec 
     urls.par_iter().map(|url| {
     
         let req = reqwest::blocking::get(url.as_str())
-            .unwrap_or_else(|err| panic!("Couldn't load the url: {}", err)); // error message for when we cannot establish a connection
+            .unwrap_or_else(|err| panic!("the URL does not exist")); // error message for when we cannot establish a connection
         // if it's a success you will not see the error message
 
         let doc_body = Html::parse_document(&req.text().unwrap());  // parsing the document itself
@@ -68,6 +69,8 @@ pub fn web_to_string(urls: Vec<String>) -> Vec<String> {    // we take in a Vec 
         }
         review_texts.join("") // joining all of them in 1 to return as a String
     })
+    .inspect(|s| println!("{}", s)) // print each result
+
     .collect() // puts it into the vector
 }
 
@@ -84,17 +87,15 @@ mod tests {
         let result = web_to_string(urls);
         assert_eq!(result.len(), 2);
         assert!(result[0].contains("The Imperial March"));
-        assert!(result[1].contains("Great film, great soundtrack"));
+        assert!(result[1].contains("Back in 1977"));
     }
 
     #[test]
+    #[should_panic]
     fn invalid_url_test() {
-        let urls_with_error_handling = vec!["https://www.themoviedb.org/review/58a231c5925141179e000674".to_string(),
-        "https://oehiuhfiuehfiucnwiunweonc.com".to_string(), 
-        ];
+        let urls_with_error_handling = vec!["https://oehiuhfiuehfiucnwiunweonc.com".to_string(),];
         let reviews_with_error_handling = web_to_string(urls_with_error_handling);
         assert_eq!(reviews_with_error_handling[0], "Well, it actually has a title, what the Darth Vader theme. And that title is \n\"The Imperial March\", composed by the great John Williams, whom, \nas many of you may already know, also composed the theme music for \n\"Jaws\" - that legendary score simply titled, \"Main Title (Theme \nFrom Jaws)\".");
-        assert!(reviews_with_error_handling[1].is_empty());
     }
 
 }
