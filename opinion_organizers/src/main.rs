@@ -1,13 +1,12 @@
 use crate::sentiment_analysis::get_sentiment_counts;
 use crate::web_scraper::review_collection;
-
 mod web_scraper;
 mod sentiment_analysis;
 
 fn analyze_review(url: &str) -> f64 {
     use rayon::iter::*;
     
-    println!("{:?}", review_collection(url));  // replace test_arr
+    review_collection(url);  // replace test_arr
 
     let test_arr = vec![  // replace with web_scraper output
         "It's a contemplative adventure and an emotional exploration that captivated me from its opening moments...",
