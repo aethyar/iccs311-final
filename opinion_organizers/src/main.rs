@@ -1,5 +1,5 @@
 use crate::sentiment_analysis::get_sentiment_counts;
-use crate::web_scraper::web_to_string;
+use crate::web_scraper::review_collection;
 
 mod web_scraper;
 mod sentiment_analysis;
@@ -7,8 +7,7 @@ mod sentiment_analysis;
 fn analyze_review(url: &str) -> f64 {
     use rayon::iter::*;
     
-    let urlss = &["https://www.themoviedb.org/review/58a231c5925141179e000674", "https://www.themoviedb.org/review/5d340e7a2f8d090388d21ff2"];
-    web_to_string(urlss);  // replace test_arr
+    println!("{:?}", review_collection(url));  // replace test_arr
 
     let test_arr = vec![  // replace with web_scraper output
         "It's a contemplative adventure and an emotional exploration that captivated me from its opening moments...",
