@@ -15,11 +15,29 @@ use rayon::prelude::*;
 
 /// Input is a link that contains other reviews
 /// through the link get the other reviews by navigating (in parallel) to each of the reviews website by clicking on "read the rest"
-/// ensure each review is not pushed to the Vector of String more than once
+/// ensure each review is not added to the slice of String more than once
 /// store the review websites in a slice
 #[allow(dead_code)]
-pub fn review_collection(masterurl: &str) -> &[&str] {
+pub fn review_collection(masterurl: &str) -> &[String] {
+    let req = reqwest::blocking::get(masterurl)
+        .unwrap_or_else(|err| panic!("Couldn't load the url: {}", err)); // error message for when we cannot establish a connection
+    
+    let doc_body = Html::parse_document(&req.text().unwrap());
 
+    let select_underline = Selector::parse("underline").unwrap();
+
+    let mut reviews = Vec::new();
+
+    for element_underline in doc_body.select(&select_underline) { // go through all the underline classes to get the links
+        if let Some(href) = element_underline.value().attr("href") { // href = hypertext reference thats the url we must follow. it is an attribute.
+            if href.starts_with("/review/") {
+                let complete_url = format!("https://www.themoviedb.org{}", href);
+                reviews.push(complete_url);
+            }
+        }
+    }
+
+    reviews.as_slice()
 }
 
 /// Checks if input url's have a successful connection
