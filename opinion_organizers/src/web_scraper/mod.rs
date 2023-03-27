@@ -36,7 +36,6 @@ pub fn review_collection(masterurl: &str) -> Vec<String> {
             }
         }
     }
-    // println!("{:?}", reviews);
     web_to_string(reviews)
 }
 
@@ -51,7 +50,7 @@ pub fn web_to_string(urls: Vec<String>) -> Vec<String> {    // we take in a Vec 
     urls.par_iter().map(|url| {
     
         let req = reqwest::blocking::get(url.as_str())
-            .unwrap_or_else(|err| panic!("the URL does not exist")); // error message for when we cannot establish a connection
+            .unwrap_or_else(|_err| panic!("the URL does not exist")); // error message for when we cannot establish a connection
         // if it's a success you will not see the error message
 
         let doc_body = Html::parse_document(&req.text().unwrap());  // parsing the document itself
@@ -63,13 +62,11 @@ pub fn web_to_string(urls: Vec<String>) -> Vec<String> {    // we take in a Vec 
         for review_selector in doc_body.select(&review_selector){
             let review_text = review_selector.text().collect::<Vec<_>>();
             for i in 0..review_text.len() { // iterator
-                //println!("{}", review_text[i]);
                 review_texts.push(review_text[i].to_string()); // pushing them into one
             }
         }
         review_texts.join("") // joining all of them in 1 to return as a String
     })
-    .inspect(|s| println!("{}", s)) // print each result
 
     .collect() // puts it into the vector
 }
