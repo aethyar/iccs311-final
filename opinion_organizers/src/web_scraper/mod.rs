@@ -24,7 +24,7 @@ pub fn review_collection(masterurl: &str) -> Vec<String> {
     
     let doc_body = Html::parse_document(&req.text().unwrap());
 
-    let select_underline = Selector::parse("underline").unwrap();
+    let select_underline = Selector::parse(".underline").unwrap();
 
     let mut reviews = Vec::new();
 
@@ -36,7 +36,6 @@ pub fn review_collection(masterurl: &str) -> Vec<String> {
             }
         }
     }
-
     web_to_string(reviews)
 }
 
