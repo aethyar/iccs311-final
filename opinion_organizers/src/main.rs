@@ -1,14 +1,14 @@
 use crate::sentiment_analysis::get_sentiment_counts;
-use crate::web_scraper::review_collection;
+use crate::web_scraper::{review_collection, web_to_string};
 mod web_scraper;
 mod sentiment_analysis;
 
 fn analyze_review(url: &str) -> f64 {
     use rayon::iter::*;
 
-    let test_arr = review_collection(url);
+    let reviews = web_to_string(review_collection(url));
 
-    let (pos, neg) = test_arr
+    let (pos, neg) = reviews
         .par_iter()
         .map(|s| get_sentiment_counts(s.to_string()))
         .reduce(|| (0, 0), |(pos_count1, neg_count1), (pos_count2, neg_count2)| { (pos_count1 + pos_count2, neg_count1 + neg_count2) } );
