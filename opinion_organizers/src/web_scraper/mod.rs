@@ -17,9 +17,10 @@ use rayon::prelude::*;
 /// through the link get the other reviews by navigating (in parallel) to each of the reviews website by clicking on "read the rest"
 /// ensure each review is not added to the slice of String more than once
 /// store the review websites in a slice
-#[allow(dead_code)]
-pub fn review_collection(masterurl: &str) -> Vec<String> {
-    let req = reqwest::blocking::get(masterurl)
+/// 
+/// Returns a Vector containing useable sub links found on the master_url
+pub fn review_collection(master_url: &str) -> Vec<String> {
+    let req = reqwest::blocking::get(master_url)
         .unwrap_or_else(|err| panic!("the URL does not exist: {}", err)); // error message for when we cannot establish a connection
     
     let doc_body = Html::parse_document(&req.text().unwrap());
@@ -44,7 +45,6 @@ pub fn review_collection(masterurl: &str) -> Vec<String> {
 /// then merges it into 1 string and repeats in parallel the same thing with the other movie reviews before mapping it to a Vector containing all of the movie reviews
 ///
 /// Returns a Vector of Strings containing the reviews
-#[allow(dead_code)]
 pub fn web_to_string(urls: Vec<String>) -> Vec<String> {    // we take in a Vec of links that can be variale in amount
 
     urls.par_iter().map(|url| {
