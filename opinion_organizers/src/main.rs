@@ -6,7 +6,7 @@ mod sentiment_analysis;
 fn analyze_review(url: &str) -> f64 {
     use rayon::iter::*;
 
-    let reviews = web_to_string(review_collection(url));
+    let reviews = review_collection(url);
 
     let (pos, neg) = reviews
         .par_iter()
