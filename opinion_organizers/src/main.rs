@@ -26,11 +26,11 @@ fn analyze_review(url: &str) -> f64 {
         );
 
     if pos == 0 {
-        return neg as f64;
+        neg as f64
     } else if neg == 0 {
-        return pos as f64;
+        pos as f64
     } else {
-        return pos as f64 / neg as f64;
+        pos as f64 / neg as f64
     }
 }
 
