@@ -3,7 +3,7 @@
 //! Functions here use our crates together.
 
 use crate::sentiment_analysis::get_sentiment_counts;
-use crate::web_scraper::{review_collection, web_to_string};
+use crate::web_scraper::review_collection;
 mod web_scraper;
 mod sentiment_analysis;
 
