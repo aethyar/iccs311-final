@@ -1,8 +1,15 @@
+//! This is the main module for the program.
+//! 
+//! Functions here use our crates together.
+
 use crate::sentiment_analysis::get_sentiment_counts;
 use crate::web_scraper::{review_collection, web_to_string};
 mod web_scraper;
 mod sentiment_analysis;
 
+/// Analyzes the reviews from the given URL
+/// 
+/// Returns the positive:negative ratio
 fn analyze_review(url: &str) -> f64 {
     use rayon::iter::*;
 
@@ -18,6 +25,9 @@ fn analyze_review(url: &str) -> f64 {
     else { return pos as f64 / neg as f64 }
 }
 
+/// Starts the program with receiving input from the user.
+/// 
+/// Prints our score of the reviews found.
 fn main() {
     use std::io;
 
