@@ -1,14 +1,14 @@
 //! This module contains the functions for web scraping in parallel
 //! of any input Vector of String.
-//! 
+//!
 //! The code uses a parallel iterator over the input to perform WebScraping quickly.
 
+extern crate rayon;
 extern crate reqwest;
 extern crate scraper;
-extern crate rayon;
 
-use scraper::{Html, Selector};
 use rayon::prelude::*;
+use scraper::{Html, Selector};
 
 // Web_scraping
 // we'll be scraping from the individual reviews on - https://www.themoviedb.org/ only.
@@ -17,20 +17,22 @@ use rayon::prelude::*;
 /// through the link get the other reviews by navigating (in parallel) to each of the reviews website by clicking on "read the rest"
 /// ensure each review is not added to the slice of String more than once
 /// store the review websites in a slice
-/// 
+///
 /// Returns a Vector containing useable sub links found on the master_url
 pub fn review_collection(master_url: &str) -> Vec<String> {
     let req = reqwest::blocking::get(master_url)
         .unwrap_or_else(|err| panic!("the URL does not exist: {}", err)); // error message for when we cannot establish a connection
-    
+
     let doc_body = Html::parse_document(&req.text().unwrap());
 
     let select_underline = Selector::parse(".underline").unwrap();
 
     let mut reviews = Vec::new();
 
-    for element_underline in doc_body.select(&select_underline) { // go through all the underline classes to get the links
-        if let Some(href) = element_underline.value().attr("href") { // href = hypertext reference thats the url we must follow. it is an attribute.
+    for element_underline in doc_body.select(&select_underline) {
+        // go through all the underline classes to get the links
+        if let Some(href) = element_underline.value().attr("href") {
+            // href = hypertext reference thats the url we must follow. it is an attribute.
             if href.starts_with("/review/") {
                 let complete_url = format!("https://www.themoviedb.org{}", href);
                 reviews.push(complete_url);
@@ -45,30 +47,31 @@ pub fn review_collection(master_url: &str) -> Vec<String> {
 /// then merges it into 1 string and repeats in parallel the same thing with the other movie reviews before mapping it to a Vector containing all of the movie reviews
 ///
 /// Returns a Vector of Strings containing the reviews
-pub fn web_to_string(urls: Vec<String>) -> Vec<String> {    // we take in a Vec of links that can be variale in amount
+pub fn web_to_string(urls: Vec<String>) -> Vec<String> {
+    // we take in a Vec of links that can be variale in amount
 
-    urls.par_iter().map(|url| {
-    
-        let req = reqwest::blocking::get(url.as_str())
-            .unwrap_or_else(|_err| panic!("the URL does not exist")); // error message for when we cannot establish a connection
-        // if it's a success you will not see the error message
+    urls.par_iter()
+        .map(|url| {
+            let req = reqwest::blocking::get(url.as_str())
+                .unwrap_or_else(|_err| panic!("the URL does not exist")); // error message for when we cannot establish a connection
+                                                                          // if it's a success you will not see the error message
 
-        let doc_body = Html::parse_document(&req.text().unwrap());  // parsing the document itself
+            let doc_body = Html::parse_document(&req.text().unwrap()); // parsing the document itself
 
-        let review_selector = Selector::parse("div.content p").unwrap();    // finding the specific content we want to scrape using either a class or html ID
+            let review_selector = Selector::parse("div.content p").unwrap(); // finding the specific content we want to scrape using either a class or html ID
 
-        let mut review_texts = Vec::new(); // this empty vector is created so it can later hold all of the texts for output
+            let mut review_texts = Vec::new(); // this empty vector is created so it can later hold all of the texts for output
 
-        for review_selector in doc_body.select(&review_selector){
-            let review_text = review_selector.text().collect::<Vec<_>>();
-            for i in 0..review_text.len() { // iterator
-                review_texts.push(review_text[i].to_string()); // pushing them into one
+            for review_selector in doc_body.select(&review_selector) {
+                let review_text = review_selector.text().collect::<Vec<_>>();
+                for i in 0..review_text.len() {
+                    // iterator
+                    review_texts.push(review_text[i].to_string()); // pushing them into one
+                }
             }
-        }
-        review_texts.join("") // joining all of them in 1 to return as a String
-    })
-
-    .collect() // puts it into the vector
+            review_texts.join("") // joining all of them in 1 to return as a String
+        })
+        .collect() // puts it into the vector
 }
 
 /// Sample tests below
@@ -77,9 +80,11 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_web_to_string() {   // checks if the output of web_to_string is as expected
-        let urls = vec!["https://www.themoviedb.org/review/58a231c5925141179e000674".to_string(), 
-                                    "https://www.themoviedb.org/review/5d340e7a2f8d090388d21ff2".to_string(),
+    fn test_web_to_string() {
+        // checks if the output of web_to_string is as expected
+        let urls = vec![
+            "https://www.themoviedb.org/review/58a231c5925141179e000674".to_string(),
+            "https://www.themoviedb.org/review/5d340e7a2f8d090388d21ff2".to_string(),
         ];
         let result = web_to_string(urls);
         assert_eq!(result.len(), 2);
@@ -89,28 +94,32 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn invalid_url_test() { // tests if web_to_string panics when given a invalir url
-        let urls_with_error_handling = vec!["https://oehiuhfiuehfiucnwiunweonc.com".to_string(),];
+    fn invalid_url_test() {
+        // tests if web_to_string panics when given a invalir url
+        let urls_with_error_handling = vec!["https://oehiuhfiuehfiucnwiunweonc.com".to_string()];
         let reviews_with_error_handling = web_to_string(urls_with_error_handling);
         assert_eq!(reviews_with_error_handling[0], "Well, it actually has a title, what the Darth Vader theme. And that title is \n\"The Imperial March\", composed by the great John Williams, whom, \nas many of you may already know, also composed the theme music for \n\"Jaws\" - that legendary score simply titled, \"Main Title (Theme \nFrom Jaws)\".");
     }
 
     #[test]
-    fn test_review_collection() {   // tests if the vector output length of review_collection is as expected
+    fn test_review_collection() {
+        // tests if the vector output length of review_collection is as expected
         let result = review_collection("https://www.themoviedb.org/movie/11-star-wars/reviews");
         assert_eq!(result.len(), 4);
     }
 
     #[test]
     #[should_panic]
-    fn invalid_review_collection_url_test() {   // tests if review_collection panics when given a invalir url
+    fn invalid_review_collection_url_test() {
+        // tests if review_collection panics when given a invalir url
         let _result = review_collection("https://oehiuhfiuehfiucnwiunweonc.com");
     }
 
     #[test]
-    fn test_review_collection_large() { // tests a set of larget reviews to see if parallelism makes it faster
-        let result = review_collection("https://www.themoviedb.org/movie/157336-interstellar/reviews");
+    fn test_review_collection_large() {
+        // tests a set of larget reviews to see if parallelism makes it faster
+        let result =
+            review_collection("https://www.themoviedb.org/movie/157336-interstellar/reviews");
         assert_eq!(result.len(), 9);
     }
-
 }

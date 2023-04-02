@@ -1,6 +1,6 @@
 //! This module contains the functions for getting the sentimental counts
 //! of any input String.
-//! 
+//!
 //! The code uses a parallel iterator over the input to perform counts quickly.
 
 use rayon::{prelude::ParallelIterator, str::ParallelString};
@@ -23,7 +23,7 @@ fn is_negative_word(word: &str) -> bool {
     dataset::NEGATIVE_WORDS.contains(word)
 }
 
-/// Produces the sentiment counts of the input by checking all the words 
+/// Produces the sentiment counts of the input by checking all the words
 /// from the input in parallel
 ///
 /// Returns the total count for positive and negative words as a tuple
@@ -76,10 +76,10 @@ mod tests {
             "While not all-together perfect, the film represents a monumental cinematic achievement that deserves to be placed high within the caliber of Nolan's filmography."
             .to_owned()
         ));
-        assert_eq!((1, 1),get_sentiment_counts(
+        assert_eq!((1, 1), get_sentiment_counts(
             "As spectacular as it is flawed."
-            .to_owned()
-        ));
+            .to_owned())
+        );
     }
 
     #[test]
