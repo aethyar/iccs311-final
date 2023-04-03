@@ -21,7 +21,7 @@ use scraper::{Html, Selector};
 /// Returns a Vector containing useable sub links found on the master_url
 pub fn review_collection(master_url: &str) -> Vec<String> {
     let req = reqwest::blocking::get(master_url)
-        .unwrap_or_else(|err| panic!("the URL does not exist: {}", err)); // error message for when we cannot establish a connection
+        .unwrap_or_else(|_err| panic!("the URL does not exist")); // error message for when we cannot establish a connection
 
     let doc_body = Html::parse_document(&req.text().unwrap());
 
