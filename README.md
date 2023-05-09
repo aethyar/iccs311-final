@@ -15,4 +15,4 @@ valuable experience in functional and parallel programming, which can be applied
 
 #
 
-##### Created by [Adrian Jay Ang](https://github.com/aethyar18) and [Jotsarup Singh Narula](https://github.com/GitJotsarup)
+##### Created by [Adrian Jay Ang](https://github.com/aethyar) and [Jotsarup Singh Narula](https://github.com/GitJotsarup)
